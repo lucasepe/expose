@@ -6,8 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"os"
-	"os/signal"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -17,91 +16,66 @@ import (
 	_ "github.com/lucasepe/expose/statik"
 )
 
-// Serve create the Remark HTML slides and the HTTP server.
-func Serve(filename string) error {
+// Exposer defines the slideshow server.
+type Exposer struct {
+	filename string
+	port     int
+	url      string
+	server   *http.Server
+}
+
+// URL returns the slideshow link.
+func (ex *Exposer) URL() string { return ex.url }
+
+// Expose create a slideshow server.
+func Expose(filename string) (*Exposer, error) {
+	workDir, err := filepath.Abs(filepath.Dir(filename))
+	if err != nil {
+		return nil, err
+	}
+	extDir := filepath.Join(workDir, "/assets")
+
 	sfs, err := fs.New()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", Handler(filename))
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(sfs)))
+	mux.Handle("/", MarkdownHandler(filename))
+	mux.Handle("/internal/", http.StripPrefix("/internal/", http.FileServer(sfs)))
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(extDir))))
 
 	// we want a free, available port selected by the system
-	listener, err := net.Listen("tcp", ":0")
+	port, err := FreeTCPPort()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	port := listener.Addr().(*net.TCPAddr).Port
-
 	origin := &url.URL{Scheme: "http"}
-	origin.Host = net.JoinHostPort(getOutboundIP(), strconv.Itoa(port))
+	origin.Host = net.JoinHostPort(GetOutboundIP(), strconv.Itoa(port))
 
-	fmt.Printf("Open your web browser and visit '%s'\n\n", origin)
-	fmt.Printf("You can run Chrome in application mode:\n")
-	fmt.Printf(" * Linux  : google-chrome --app=%s\n", origin)
-	fmt.Printf(" * Windows: chrome --app=%s\n", origin)
+	res := &Exposer{filename: filename, port: port, url: origin.String()}
+	res.server = &http.Server{Addr: fmt.Sprintf(":%d", res.port), Handler: mux}
 
-	server := &http.Server{Addr: fmt.Sprintf(":%d", port), Handler: mux}
+	return res, nil
+}
 
+// Serve starts the HTTP server and serves the slideshow.
+func (ex *Exposer) Serve(ctx context.Context) error {
 	go func() error {
-		if err := server.Serve(listener); err != nil {
+		if err := ex.server.ListenAndServe(); err != nil {
 			return err
 		}
 		return nil
 	}()
 
-	// Setting up signal capturing
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt)
-
-	// Waiting for SIGINT (pkill -2)
-	<-stop
+	<-ctx.Done()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if err := server.Shutdown(ctx); err != nil {
+	if err := ex.server.Shutdown(ctx); err != nil && err != http.ErrServerClosed {
 		return err
 	}
 
 	return nil
-}
-
-// Get preferred outbound ip of this machine
-func getOutboundIP() string {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		return "127.0.0.1"
-	}
-	defer conn.Close()
-
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-
-	return localAddr.IP.String()
-}
-
-// Handler returns a handler that serves HTTP requests
-// with the contents of the Markdown slides using Remark JS.
-func Handler(filename string) http.Handler {
-	return &slidesHandler{filename}
-}
-
-type slidesHandler struct {
-	fileName string
-}
-
-func (h *slidesHandler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
-	doc, err := FromFile(h.fileName)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := doc.Render(w); err != nil {
-		msg := fmt.Sprintf("error: %s while rendering slide", err.Error())
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
 }
