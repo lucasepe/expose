@@ -69,8 +69,6 @@ func main() {
 func usage() {
 	printBanner()
 
-	fmt.Fprintf(os.Stderr, "Markdown Driven Slide Presentations Viewer.\n\n")
-
 	fmt.Fprintf(os.Stderr, "USAGE:\n\n")
 	fmt.Fprintf(os.Stderr, "  %s /path/to/your/file.md\n\n", appName())
 
