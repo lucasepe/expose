@@ -36,7 +36,7 @@ nfpms:
     vendor: Luca Sepe
     homepage: https://lucasepe.it/
     maintainer: Luca Sepe <luca.sepe@gmail.com>
-    description: Markdown Driven Slide Presentations Viewer
+    description: Markdown Driven Slides Viewer
     license: MIT
     replacements:
       amd64: 64-bit
