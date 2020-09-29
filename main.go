@@ -20,7 +20,7 @@ const (
 (____)(_/\_)(__)   \__/ (____/(____) Markdown Driven Slides Viewer`
 )
 
-var version = "0.2.0"
+var version = "0.2.1"
 
 func main() {
 	flag.Usage = usage
