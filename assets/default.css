@@ -106,9 +106,13 @@ hr {
 
 .remark-code, .remark-inline-code { 
   font-family: 'Fira Mono', monospace; 
+}
+
+.remark-code { 
   font-size: 0.7em;
 }
-.remark-code-line-highlighted     { background-color: #37383299; }
+
+.remark-code-line-highlighted     { background-color: #37383299; color: #fafafa; }
 
 .pull-left {
   float: left;
@@ -122,6 +126,20 @@ hr {
 .pull-right ~ p {
   clear: both;
 }
+
+
+.pull-left30 {
+  float: left;
+  width: 37%;
+}
+
+.pull-right70 {
+  float: right;
+  width: 57%;
+}
+.pull-right70 ~ p {
+  clear: both;
+}
   
 .inverse {
   background: #272822;
@@ -131,6 +149,7 @@ hr {
 .inverse h1, .inverse h2 {
   color: #f3f3f3;
   line-height: 1.2em;
+  font-weight: 400;
 }
 
 .huge { font-size: 140% }
@@ -153,6 +172,28 @@ hr {
 
 .bold { font-weight: bold; }
 .bolder { font-weight: bolder; }
+
+/****************
+ * Tables       *
+ ****************/
+
+table{
+  width:80%;
+  /*table-layout: fixed;*/
+  font-size: 70%;
+}
+
+th{
+  padding: 4px 4px;
+  vertical-align:middle;
+  font-weight: 700;
+}
+td{
+  padding: 4px;
+  vertical-align:middle;
+  /*border-bottom: solid 1px rgba(101, 105, 110,0.1);*/
+}
+
 
 /**************** 
  *  Image stuff *
