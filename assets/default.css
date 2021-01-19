@@ -82,7 +82,7 @@ code {
 }
 
 a, a > code {
-  color: rgb(249, 38, 114);
+  color: #f92672;
   text-decoration: none;
 }
 
@@ -92,24 +92,21 @@ hr {
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 
-.remark-slide-content h1 { font-size: 3em; }
-.remark-slide-content h2 { font-size: 2em; }
-.remark-slide-content h3 { font-size: 1.6em; }
+.remark-slide-content h1 { font-size: 2.7em; }
+.remark-slide-content h2 { font-size: 1.7em; }
+.remark-slide-content h3 { font-size: 1.3em; }
   
 .footnote {
   position: absolute;
   bottom: 3em;
 }
-  
-.red { color: #fa0000; }
-.large { font-size: 1.5em; }
 
 .remark-code, .remark-inline-code { 
   font-family: 'Fira Mono', monospace; 
 }
 
 .remark-code { 
-  font-size: 0.7em;
+  font-size: 0.65em;
 }
 
 .remark-code-line-highlighted     { background-color: #37383299; color: #fafafa; }
@@ -127,20 +124,32 @@ hr {
   clear: both;
 }
 
-
 .pull-left30 {
   float: left;
-  width: 37%;
+  width: 27%;
 }
 
 .pull-right70 {
   float: right;
-  width: 57%;
+  width: 67%;
 }
 .pull-right70 ~ p {
   clear: both;
 }
-  
+
+.pull-left40 {
+  float: left;
+  width: 37%;
+}
+
+.pull-right60 {
+  float: right;
+  width: 57%;
+}
+.pull-right60 ~ p {
+  clear: both;
+}
+
 .inverse {
   background: #272822;
   color: #777872;
@@ -165,7 +174,7 @@ hr {
 .green { color: #728302; }
 .yellow { color: #FFD960; }
 .orange { color: #F09905; }
-.purple { color: #993399; }
+.purple { color: #f92672; }
 .graphite { color: #666666; }
 .granite { color: #B5B5B5; }
 .limestone { color: #E5E5E5; }
@@ -178,7 +187,7 @@ hr {
  ****************/
 
 table{
-  width:80%;
+  width:94%;
   /*table-layout: fixed;*/
   font-size: 70%;
 }
